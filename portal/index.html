@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Buyers Portal | Blueprint Real Estate Systems</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%23202124'/%3E%3Cpath d='M50 14 L60 50 L50 86 L40 50 Z' fill='%231C9DE0'/%3E%3Ccircle cx='50' cy='50' r='7' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://blessed-dassie-842.clerk.accounts.dev" crossorigin>
+<link rel="preconnect" href="https://dpbpzrhteomnhyogmuui.supabase.co" crossorigin>
+<link rel="preconnect" href="https://blueprint-res-api.javier-d51.workers.dev" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#f5f6f8; --card:#ffffff; --line:#e6e8eb; --line-2:#d5d8dc;
+    --ink:#202124; --ink-2:#37383b; --dim:#6b6e73; --faint:#9a9da2;
+    --bp:#1c9de0; --bp-deep:#1583bd; --bp-soft:#e6f4fc; --bp-ink:#116a9a;
+    --ok:#15803d; --ok-soft:#dcfce7; --warn:#a16207; --warn-soft:#fef3c7; --bad:#b91c1c; --bad-soft:#fee2e2;
+    --nav:#151618;
+    --sans:'Inter',system-ui,-apple-system,sans-serif; --display:'Archivo','Inter',sans-serif;
+    --r:14px;
+  }
+  * { box-sizing:border-box; }
+  [hidden] { display:none !important; }
+  html, body { margin:0; background:var(--bg); color:var(--ink); font-family:var(--sans); -webkit-font-smoothing:antialiased; }
+  a { color:var(--bp-deep); }
+  .num { font-variant-numeric:tabular-nums; }
+  button, input, select, textarea { font:inherit; }
+  :focus-visible { outline:2px solid var(--bp); outline-offset:2px; }
+
+  /* nav */
+  .nav { position:sticky; top:0; z-index:40; background:var(--nav); border-bottom:1px solid rgba(255,255,255,0.08); }
+  .nav-in { max-width:1120px; margin:0 auto; padding:0 20px; height:64px; display:flex; align-items:center; justify-content:space-between; gap:16px; }
+  .brand { display:flex; align-items:center; gap:10px; text-decoration:none; }
+  .brand b { font-family:var(--display); font-weight:800; font-size:16px; letter-spacing:0.04em; color:#fff; white-space:nowrap; }
+  .brand b span { color:var(--bp); }
+  .brand small { color:#8c929c; font-size:12px; font-weight:600; border-left:1px solid rgba(255,255,255,0.15); padding-left:10px; margin-left:2px; }
+  .nav-links { display:flex; align-items:center; gap:18px; }
+  .nav-links a { color:#c7c9cc; text-decoration:none; font-size:14px; font-weight:600; }
+  .nav-links a:hover, .nav-links a.on { color:#fff; }
+  .menu { position:relative; display:inline-flex; }
+  .menu .caret { font-size:10px; opacity:.8; }
+  .menu-list { position:absolute; top:100%; left:-14px; min-width:210px; background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:0 18px 40px -20px rgba(6,39,59,0.45); padding:6px; display:none; flex-direction:column; gap:2px; z-index:50; }
+  .menu:hover .menu-list, .menu:focus-within .menu-list { display:flex; }
+  .menu-list a { color:var(--ink-2); padding:9px 12px; border-radius:9px; font-size:14px; white-space:nowrap; }
+  .menu-list a:hover { background:var(--bg); color:var(--bp-ink); }
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; border:0; border-radius:11px; padding:11px 18px; font-weight:700; font-size:14.5px; cursor:pointer; text-decoration:none; transition:background .15s, transform .15s; }
+  .btn-primary { background:var(--bp); color:#fff; box-shadow:0 10px 24px -12px rgba(28,157,224,0.6); }
+  .btn-primary:hover { background:var(--bp-deep); }
+  .btn-primary:disabled { opacity:.6; cursor:default; }
+  .btn-ghost { background:transparent; color:var(--ink-2); border:1px solid var(--line-2); }
+  .btn-ghost:hover { border-color:var(--bp); color:var(--bp-ink); }
+  .btn-sm { padding:8px 14px; font-size:13.5px; border-radius:9px; }
+  @media (max-width:640px) { .brand small { display:none; } .nav-links a.hide-sm { display:none; } }
+
+  main { max-width:1120px; margin:0 auto; padding:32px 20px 80px; min-height:calc(100vh - 64px - 96px); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:var(--r); box-shadow:0 1px 2px rgba(16,22,26,0.03), 0 10px 28px -24px rgba(6,39,59,0.16); }
+  .eyebrow { font-size:11.5px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--bp-deep); }
+  h1 { font-family:var(--display); font-weight:800; letter-spacing:-0.015em; margin:8px 0 10px; font-size:clamp(28px,4vw,40px); line-height:1.08; text-wrap:balance; }
+  h2 { font-family:var(--display); font-weight:700; font-size:18px; margin:0 0 16px; }
+  .lead { color:var(--dim); font-size:16px; line-height:1.6; max-width:60ch; margin:0; }
+  .center-wrap { max-width:520px; margin:0 auto; }
+
+  /* notices */
+  .notice { border-radius:12px; padding:16px 18px; display:flex; gap:12px; align-items:flex-start; line-height:1.5; font-size:14.5px; }
+  .notice b { display:block; margin-bottom:2px; }
+  .notice.info { background:var(--bp-soft); color:var(--bp-ink); }
+  .notice.ok { background:var(--ok-soft); color:var(--ok); }
+  .notice.warn { background:var(--warn-soft); color:var(--warn); }
+  .notice.bad { background:var(--bad-soft); color:var(--bad); }
+
+  /* forms */
+  .form { padding:28px; display:grid; gap:16px; }
+  .row2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; align-items:start; }
+  @media (max-width:560px) { .row2 { grid-template-columns:1fr; } .form { padding:20px; } }
+  .field { display:grid; gap:6px; align-content:start; }
+  .field label { font-size:13px; font-weight:600; color:var(--ink-2); }
+  .field label .opt { color:var(--faint); font-weight:500; }
+  .input { width:100%; border:1px solid var(--line-2); background:#fff; border-radius:10px; padding:11px 13px; font-size:15px; color:var(--ink); outline:none; transition:border-color .15s, box-shadow .15s; }
+  .input:focus { border-color:var(--bp); box-shadow:0 0 0 3px rgba(28,157,224,0.18); }
+  textarea.input { min-height:90px; resize:vertical; }
+  .check { display:flex; gap:10px; align-items:flex-start; font-size:13.5px; color:var(--dim); line-height:1.5; cursor:pointer; }
+  .check input { margin-top:3px; accent-color:var(--bp); width:16px; height:16px; flex-shrink:0; }
+  .form-status { font-size:14px; font-weight:600; min-height:20px; }
+  .field.invalid .input { border-color:var(--bad); box-shadow:0 0 0 3px rgba(185,28,28,0.14); }
+  .field .err { color:var(--bad); font-size:12.5px; font-weight:600; }
+  .hp { position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+  /* bot check ("I'm not a robot") */
+  .robot { display:flex; align-items:center; gap:14px; border:1px solid var(--line-2); background:#fafbfc; border-radius:12px; padding:14px 16px; }
+  .robot button { width:28px; height:28px; flex-shrink:0; border:2px solid #b7bcc2; background:#fff; border-radius:7px; cursor:pointer; display:flex; align-items:center; justify-content:center; padding:0; transition:border-color .15s, background .15s; }
+  .robot button:hover:not(:disabled) { border-color:var(--bp); }
+  .robot button:disabled { cursor:default; }
+  .robot .spin { width:18px; height:18px; border-radius:50%; border:2.5px solid var(--bp-soft); border-top-color:var(--bp); animation:rspin .8s linear infinite; }
+  @keyframes rspin { to { transform:rotate(360deg); } }
+  .robot.done button { border-color:var(--ok); background:var(--ok); }
+  .robot .txt { flex:1; min-width:0; }
+  .robot .txt b { display:block; font-size:14.5px; font-weight:600; color:var(--ink); }
+  .robot .txt small { display:block; font-size:12px; color:var(--faint); margin-top:1px; }
+  .robot .shield { color:var(--faint); flex-shrink:0; }
+  .field.invalid .robot { border-color:var(--bad); box-shadow:0 0 0 3px rgba(185,28,28,0.14); }
+
+  /* deals grid */
+  .deals-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:22px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:20px; }
+  .deal-card { overflow:hidden; text-decoration:none; color:inherit; display:block; transition:box-shadow .2s, transform .2s; }
+  .deal-card:hover { transform:translateY(-3px); box-shadow:0 22px 44px -26px rgba(6,39,59,0.35); }
+  .deal-card .ph { position:relative; aspect-ratio:16/10; background:#dfe3e7; overflow:hidden; }
+  .deal-card .ph img { width:100%; height:100%; object-fit:cover; display:block; }
+  .pill { font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px; letter-spacing:0.04em; text-transform:uppercase; }
+  .pills { position:absolute; top:12px; left:12px; display:flex; gap:6px; }
+  .deal-card .body { padding:16px 18px 18px; }
+  .price-line { display:flex; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .price-line b { font-size:20px; font-weight:700; }
+  .price-line span { color:var(--faint); font-size:12.5px; }
+  .addr { color:var(--dim); font-size:14px; margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .specs { display:flex; gap:14px; color:var(--faint); font-size:13px; margin-top:10px; }
+  .type-tag { margin-top:12px; display:flex; }
+  .status-pills { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+
+  /* featured deal + status toggle */
+  .featured { display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); }
+  .featured .ph { aspect-ratio:auto; min-height:340px; }
+  .featured .body { padding:30px 32px; display:flex; flex-direction:column; justify-content:center; }
+  .featured .price-line b { font-family:var(--display); font-size:34px; font-weight:800; }
+  .featured .addr { white-space:normal; font-size:15.5px; margin-top:8px; }
+  .arv-line { margin-top:6px; font-size:15px; color:var(--dim); }
+  .arv-line b { color:var(--ink); font-weight:700; }
+  .seg-row { display:flex; gap:10px; flex-wrap:wrap; }
+  @media (max-width:760px) { .featured { grid-template-columns:1fr; } .featured .ph { min-height:0; aspect-ratio:16/10; } .featured .body { padding:20px; } }
+  .seg { display:inline-flex; background:#e9ebee; border-radius:12px; padding:4px; gap:4px; }
+  .seg button { border:0; background:transparent; border-radius:9px; padding:9px 14px; font-weight:600; font-size:14px; color:var(--dim); cursor:pointer; display:inline-flex; align-items:center; gap:8px; }
+  .seg button span { font-size:12px; background:rgba(0,0,0,0.06); border-radius:999px; padding:1px 8px; }
+  .seg button[aria-selected="true"] { background:#fff; color:var(--ink); box-shadow:0 1px 3px rgba(16,22,26,0.12); }
+  .seg button[aria-selected="true"] span { background:var(--bp-soft); color:var(--bp-ink); }
+
+  /* deal detail */
+  .back { display:inline-flex; align-items:center; gap:6px; color:var(--dim); text-decoration:none; font-size:14px; font-weight:500; margin-bottom:18px; }
+  .back:hover { color:var(--bp-deep); }
+  .mosaic { display:grid; grid-template-columns:2fr 1fr 1fr; grid-template-rows:repeat(2, 210px); gap:8px; border-radius:16px; overflow:hidden; }
+  .mosaic > button { position:relative; overflow:hidden; border:0; padding:0; cursor:pointer; background:#dfe3e7; }
+  .mosaic > button:first-child { grid-row:1 / -1; }
+  .mosaic img { width:100%; height:100%; object-fit:cover; display:block; transition:transform .35s; }
+  .mosaic > button:hover img { transform:scale(1.04); }
+  .mosaic .more { position:absolute; inset:0; background:rgba(14,18,22,0.55); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; }
+  @media (max-width:640px) { .mosaic { grid-template-columns:1fr 1fr; grid-template-rows:230px 110px; } .mosaic > button:first-child { grid-column:1 / -1; grid-row:1; } .mosaic > button:nth-child(n+4) { display:none; } }
+  .detail-head { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap; margin-top:22px; }
+  .detail-head h1 { font-size:clamp(24px,3vw,32px); margin:0; }
+  .loc { color:var(--dim); margin-top:6px; font-size:15px; }
+  .layout { display:grid; grid-template-columns:minmax(0,2fr) minmax(0,1fr); gap:22px; margin-top:22px; align-items:start; }
+  @media (max-width:900px) { .layout { grid-template-columns:1fr; } }
+  .stack { display:grid; gap:22px; }
+  .pad { padding:22px 24px; }
+  .specbar { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+  @media (max-width:560px) { .specbar { grid-template-columns:1fr 1fr; } }
+  .specbar div small { display:block; color:var(--faint); font-size:12px; font-weight:500; }
+  .specbar div b { font-size:18px; }
+  .kv { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:16px 22px; }
+  .kv div small { display:block; font-weight:600; font-size:13px; color:var(--ink); }
+  .kv div span { font-size:13.5px; color:var(--dim); }
+  .desc { white-space:pre-line; color:#46474a; line-height:1.65; font-size:15px; }
+  .rows > div { display:flex; justify-content:space-between; gap:16px; padding:9px 0; border-top:1px solid var(--line); font-size:14px; }
+  .rows > div:first-child { border-top:0; }
+  .rows span { color:var(--dim); }
+  .rows b { text-align:right; }
+  .side { position:sticky; top:84px; }
+  @media (max-width:900px) { .side { position:static; } }
+  .bigprice { font-family:var(--display); font-weight:800; font-size:30px; }
+  .checks { display:grid; grid-template-columns:1fr 1fr; gap:8px 20px; font-size:14px; color:var(--ink-2); }
+  @media (max-width:560px) { .checks { grid-template-columns:1fr; } }
+  .checks div::before { content:'\2713'; color:var(--ok); font-weight:700; margin-right:8px; }
+
+  /* clerk mounts */
+  .clerk-mount { display:flex; justify-content:center; padding:10px 0; }
+  .signin-wrap { max-width:440px; display:grid; justify-items:center; gap:14px; padding-top:12px; }
+  .signin-wrap .clerk-mount { padding:0; width:100%; }
+  .member-cta { width:100%; padding:22px 24px; text-align:center; display:grid; gap:8px; justify-items:center; }
+  .member-cta b { font-family:var(--display); font-size:17px; }
+  .member-cta span { color:var(--dim); font-size:14px; line-height:1.55; }
+  .member-cta .btn { margin-top:8px; width:100%; }
+
+  /* lightbox */
+  .lb { position:fixed; inset:0; z-index:90; background:rgba(0,0,0,0.92); display:flex; align-items:center; justify-content:center; padding:20px; }
+  .lb img { max-width:92vw; max-height:84vh; object-fit:contain; border-radius:10px; }
+  .lb .x, .lb .nav-b { position:absolute; background:rgba(255,255,255,0.12); color:#fff; border:0; border-radius:50%; width:44px; height:44px; font-size:22px; cursor:pointer; }
+  .lb .x { top:18px; right:18px; }
+  .lb .prev { left:18px; top:50%; transform:translateY(-50%); }
+  .lb .next { right:18px; top:50%; transform:translateY(-50%); }
+  .lb .cap { position:absolute; bottom:18px; left:0; right:0; text-align:center; color:#c7c9cc; font-size:13.5px; }
+
+  /* modal */
+  .modal { position:fixed; inset:0; z-index:80; background:rgba(10,12,16,0.7); display:flex; align-items:center; justify-content:center; padding:16px; }
+  .modal .card { width:100%; max-width:460px; }
+
+  .skeleton { background:linear-gradient(90deg,#eceef1,#f6f7f9,#eceef1); background-size:200% 100%; animation:sk 1.2s infinite; border-radius:12px; }
+  @keyframes sk { to { background-position:-200% 0; } }
+  @media (prefers-reduced-motion: reduce) { .skeleton, .robot .spin { animation:none; } .deal-card, .mosaic img { transition:none; } }
+
+  footer { background:#fff; border-top:1px solid var(--line); color:var(--dim); }
+  footer .wrap { max-width:1180px; margin:0 auto; padding:0 24px; }
+  footer .foot { display:grid; grid-template-columns:minmax(0,1.4fr) repeat(2,minmax(0,0.6fr)); gap:40px; padding:56px 0 40px; }
+  footer .foot p { font-size:14.5px; margin:14px 0 0; max-width:26em; }
+  footer .brand b { color:var(--ink); font-size:17px; }
+  footer h4 { margin:0 0 14px; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; color:var(--dim); }
+  footer ul { list-style:none; margin:0; padding:0; display:grid; gap:10px; }
+  footer ul a { text-decoration:none; font-size:14.5px; font-weight:500; color:var(--ink-2); }
+  footer ul a:hover { color:var(--bp-ink); }
+  footer .legal { border-top:1px solid var(--line); padding:22px 0 30px; display:flex; justify-content:space-between; gap:16px 40px; flex-wrap:wrap; font-size:12.5px; color:var(--faint); }
+  footer .legal p { margin:0; max-width:60em; }
+  footer .legal a { color:var(--dim); margin-left:14px; }
+  @media (max-width:720px) { footer .foot { grid-template-columns:1fr 1fr; } footer .foot > div:first-child { grid-column:1 / -1; } }
+  /* Signed in: the footer is just the brand + legal. No Apply / Log In / site links that walk a member back out. */
+  body.signed-in footer .foot { grid-template-columns:1fr; padding:36px 0 26px; }
+  body.signed-in footer .foot-links { display:none; }
+</style>
+</head>
+<body>
+<header class="nav">
+  <div class="nav-in">
+    <a class="brand" id="brand" href="https://javmartz04-ship-it.github.io/blueprint-res-preview/">
+      <svg width="30" height="30" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" fill="none" stroke="#1C9DE0" stroke-width="5"/><path d="M50 14 L60 50 L50 86 L40 50 Z" fill="#1C9DE0"/><circle cx="50" cy="50" r="7" fill="#fff"/></svg>
+      <b>BLUEPRINT <span>RES</span></b>
+    </a>
+    <nav class="nav-links" id="nav-links" aria-label="Portal"></nav>
+  </div>
+</header>
+
+<main id="app" aria-live="polite">
+  <div class="skeleton" style="height:180px"></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot">
+      <div>
+        <a class="brand" id="foot-brand" data-site="" href="https://javmartz04-ship-it.github.io/blueprint-res-preview/">
+          <svg width="30" height="30" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="46" fill="none" stroke="#1C9DE0" stroke-width="5"/><path d="M50 14 L60 50 L50 86 L40 50 Z" fill="#1C9DE0"/><circle cx="50" cy="50" r="7" fill="#202124"/></svg>
+          <b>BLUEPRINT <span>RES</span></b>
+        </a>
+        <p>Off-market deals for members of the Blueprint RES private buyers list.</p>
+      </div>
+      <div class="foot-links">
+        <h4>Site</h4>
+        <ul><li><a data-site="#deals" href="#">Deals</a></li><li><a data-site="#how" href="#">How it works</a></li><li><a data-site="#about" href="#">About</a></li></ul>
+      </div>
+      <div class="foot-links">
+        <h4>Buyers</h4>
+        <ul><li><a href="?view=sign-in" data-view="/sign-in">Log In</a></li><li><a href="?view=apply" data-view="/apply">Apply</a></li></ul>
+      </div>
+    </div>
+    <div class="legal">
+      <span>&copy; <span id="yr"></span> Blueprint Real Estate Systems, LLC<span id="legal-links"></span></span>
+      <p>Properties are sold as-is. Figures shown are estimates provided for convenience only. Buyers must independently verify all details, condition, and title before purchase. This is not an offer of securities or investment advice.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var real = window.fetch;
+  function hex(b) { return Array.prototype.map.call(new Uint8Array(b), function (x) { return ("0" + x.toString(16)).slice(-2); }).join(""); }
+  window.fetch = function (url, opts) {
+    url = String(url);
+    if (url.indexOf("/api/portal/challenge") >= 0) {
+      var salt = hex(crypto.getRandomValues(new Uint8Array(12))) + "." + Date.now(), n = Math.floor(Math.random() * 60000);
+      return crypto.subtle.digest("SHA-256", new TextEncoder().encode(salt + n)).then(function (h) {
+        return new Response(JSON.stringify({ algorithm: "SHA-256", salt: salt, challenge: hex(h), maxnumber: 60000, signature: "preview" }), { headers: { "Content-Type": "application/json" } });
+      });
+    }
+    if (url.indexOf("/api/portal/apply") >= 0) {
+      return Promise.resolve(new Response(JSON.stringify({ ok: true, preview: true }), { headers: { "Content-Type": "application/json" } }));
+    }
+    return real.apply(this, arguments);
+  };
+})();
+</script>
+<script>
+(function () {
+  "use strict";
+  // Replaced at build time for the GHL paste. Served from the Worker it stays a
+  // placeholder and every call is same-origin.
+  var API_BASE = "https://blueprint-res-api.javier-d51.workers.dev";
+  if (API_BASE.indexOf("__") === 0) API_BASE = "";
+  // Public config (Clerk + Supabase keys) is baked in at build time so the
+  // sign-in script starts downloading immediately. Falls back to a fetch.
+  var CFG0 = {"clerkPublishableKey": "pk_test_Ymxlc3NlZC1kYXNzaWUtODQyLmNsZXJrLmFjY291bnRzLmRldiQ", "clerkFapi": "blessed-dassie-842.clerk.accounts.dev", "supabaseUrl": "https://dpbpzrhteomnhyogmuui.supabase.co", "supabasePublishableKey": "sb_publishable_6YL7VkN0p9vzYey6VLvaKQ_Y-h9hvDH", "termsUrl": "", "privacyUrl": ""};
+  var PAGE_URL = location.origin + location.pathname;
+  var CFG = null, clerkReady = null;
+  // One call to action, repeated verbatim everywhere a visitor is asked to apply.
+  var CTA = "Apply To Join Our Private Buyers List";
+  var app = document.getElementById("app");
+  // The public homepage. Captured before the logo is repointed at the deals.
+  var SITE_URL = document.getElementById("brand").href;
+  document.getElementById("yr").textContent = new Date().getFullYear();
+  document.querySelectorAll("footer [data-site]").forEach(function (a) { a.href = SITE_URL + a.getAttribute("data-site"); });
+
+  /* ---------------- helpers ---------------- */
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  }
+  var TYPE_LABEL = { retail: "Retail buyer deal", investor: "Investor buyer deal" };
+  function typePill(t) {
+    if (!TYPE_LABEL[t]) return "";
+    return '<span class="pill" style="' + (t === "retail" ? 'background:#ede9fe;color:#5b21b6' : 'background:#e0f2fe;color:#075985') + '">' + TYPE_LABEL[t] + '</span>';
+  }
+  function money(n) { return "$" + Math.round(Number(n) || 0).toLocaleString("en-US"); }
+  function moneyK(n) { n = Number(n) || 0; return n >= 1000000 ? "$" + (n / 1000000).toFixed(2).replace(/\.?0+$/, "") + "M" : "$" + Math.round(n / 1000) + "K"; }
+  function range(lo, hi) { lo = Number(lo) || 0; hi = Number(hi) || 0; if (lo && hi) return lo === hi ? moneyK(lo) : moneyK(lo) + " - " + moneyK(hi); return moneyK(lo || hi); }
+  // Views live in ?view= (plus &deal= for a deal). Never in "#/...": Clerk treats
+  // hash paths like #/sign-in as its own routes and redirects away.
+  function viewUrl(path) {
+    var q = new URLSearchParams();
+    if (path.indexOf("/deals?type=") === 0) { q.set("view", "deals"); q.set("type", path.slice("/deals?type=".length)); }
+    else if (path.indexOf("/deals/") === 0) { q.set("view", "deal"); q.set("deal", path.slice(7)); }
+    else if (path !== "/") q.set("view", path.slice(1));
+    var qs = q.toString();
+    return PAGE_URL + (qs ? "?" + qs : "");
+  }
+  function go(path) { history.pushState(null, "", viewUrl(path)); route(); window.scrollTo(0, 0); }
+  function notice(kind, title, body) { return '<div class="notice ' + kind + '"><div><b>' + esc(title) + '</b>' + (body || "") + '</div></div>'; }
+  function page(html) { app.innerHTML = html; }
+
+  window.addEventListener("popstate", route);
+  // In-page links (?view=...) switch views without reloading the page.
+  document.addEventListener("click", function (e) {
+    var a = e.target.closest && e.target.closest("a[data-view]");
+    if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+    e.preventDefault();
+    go(a.getAttribute("data-view"));
+  });
+  function currentRoute() {
+    var q = new URLSearchParams(location.search);
+    var view = q.get("view") || "";
+    var deal = q.get("deal");
+    if (view === "deals" && q.get("type")) return "/deals?type=" + q.get("type").replace(/[^a-z]/g, "");
+    if (view === "deal" && deal) return "/deals/" + deal;
+    if (!view && deal) return "/deals/" + deal;          // old homepage ?deal= links
+    if (view) return "/" + view.replace(/[^a-z-]/g, "");
+    var m = location.pathname.match(/\/portal(\/.*)?$/); // Worker-hosted /portal/<view>
+    if (m && m[1]) return m[1].replace(/\/+$/, "") || "/";
+    return "/";
+  }
+
+  /* ---------------- boot: config + Clerk ---------------- */
+  function loadConfig() {
+    var src = (CFG0 && typeof CFG0 === "object" && CFG0.clerkPublishableKey)
+      ? Promise.resolve(CFG0)
+      : fetch(API_BASE + "/api/portal/config", { cache: "no-store" }).then(function (r) { return r.json(); });
+    return src.then(function (c) {
+      CFG = c;
+      var legal = [];
+      if (c.privacyUrl) legal.push('<a href="' + esc(c.privacyUrl) + '" target="_blank" rel="noopener">Privacy Policy</a>');
+      if (c.termsUrl) legal.push('<a href="' + esc(c.termsUrl) + '" target="_blank" rel="noopener">Terms</a>');
+      document.getElementById("legal-links").innerHTML = legal.join("");
+      return c;
+    });
+  }
+  function loadClerk() {
+    if (clerkReady) return clerkReady;
+    clerkReady = new Promise(function (resolve, reject) {
+      var s = document.createElement("script");
+      s.async = true;
+      s.crossOrigin = "anonymous";
+      s.setAttribute("data-clerk-publishable-key", CFG.clerkPublishableKey);
+      s.src = "https://" + CFG.clerkFapi + "/npm/@clerk/clerk-js@5/dist/clerk.browser.js";
+      s.onload = function () {
+        // No signInUrl/signUpUrl here on purpose: with hash routing Clerk would
+        // redirect to them and append ?redirect_url= inside the hash, looping.
+        // The page mounts Clerk's components itself with virtual routing.
+        window.Clerk.load({
+          appearance: {
+            variables: { colorPrimary: "#1c9de0", fontFamily: "Inter, system-ui, sans-serif", borderRadius: "10px", colorText: "#202124" },
+            elements: { footerAction: { display: "none" } }
+          },
+          localization: {
+            signIn: { start: { title: "Sign in to Blueprint RES Private Deals", subtitle: "Welcome back. Sign in to view active deals." } }
+          }
+        }).then(function () {
+          window.Clerk.addListener(function () { renderNav(); });
+          resolve(window.Clerk);
+        }).catch(reject);
+      };
+      s.onerror = function () { reject(new Error("Sign-in service could not load")); };
+      document.head.appendChild(s);
+    });
+    return clerkReady;
+  }
+
+  // The public homepage (same GHL origin) reads this flag and sends members
+  // straight to their deals instead of the marketing page.
+  function rememberSignedIn(on) {
+    try { if (on) localStorage.setItem("bp_member", "1"); else localStorage.removeItem("bp_member"); } catch (e) {}
+    document.body.classList.toggle("signed-in", !!on);
+    var brand = document.getElementById("brand");
+    [brand, document.getElementById("foot-brand")].forEach(function (b) {
+      if (on) { b.href = viewUrl("/deals"); b.setAttribute("data-view", "/deals"); }
+      else { b.href = SITE_URL; b.removeAttribute("data-view"); }
+    });
+  }
+  function renderNav() {
+    var nav = document.getElementById("nav-links");
+    var signedIn = !!(window.Clerk && window.Clerk.user);
+    var p = currentRoute();
+    if (window.Clerk && window.Clerk.loaded) rememberSignedIn(signedIn);
+    if (signedIn) {
+      nav.innerHTML = '<a href="?view=deals" data-view="/deals" class="' + (p === "/deals" ? "on" : "") + '">Home</a>' +
+        '<span class="menu"><a href="?view=deals" data-view="/deals" class="' + (p.indexOf("/deals") === 0 ? "on" : "") + '">Deals <span class="caret" aria-hidden="true">&#9662;</span></a>' +
+        '<span class="menu-list">' +
+          '<a href="?view=deals&type=all" data-view="/deals?type=all">All Deals</a>' +
+          '<a href="?view=deals&type=retail" data-view="/deals?type=retail">Retail Buyer Deals</a>' +
+          '<a href="?view=deals&type=investor" data-view="/deals?type=investor">Investor Buyer Deals</a>' +
+        '</span></span>' +
+        '<a href="?view=profile" data-view="/profile" class="hide-sm ' + (p === "/profile" ? "on" : "") + '">Profile</a>' +
+        '<span id="user-btn"></span>';
+      var ub = document.getElementById("user-btn");
+      if (ub && window.Clerk.mountUserButton) window.Clerk.mountUserButton(ub, { afterSignOutUrl: PAGE_URL + "?view=signed-out", userProfileUrl: viewUrl("/profile"), userProfileMode: "navigation" });
+    } else {
+      nav.innerHTML = '<a href="' + esc(SITE_URL) + '">Home</a>' + '<a href="?view=apply" data-view="/apply" class="' + (p === "/apply" ? "on" : "") + '">Apply</a>' +
+        '<a href="?view=sign-in" data-view="/sign-in" class="btn btn-primary btn-sm" style="color:#fff">Sign In</a>';
+    }
+  }
+
+  /* ---------------- views ---------------- */
+  function viewLanding() {
+    page(
+      '<div class="center-wrap" style="max-width:640px;text-align:center;padding-top:40px">' +
+        '<div class="eyebrow">Private buyer access</div>' +
+        '<h1>Off-market deals for our private buyers list</h1>' +
+        '<p class="lead" style="margin:0 auto">Blueprint RES shares full numbers, photos, and addresses with members of our private buyers list. It is free to join. Apply once, get approved, and every active deal lives here.</p>' +
+        '<div style="display:flex;gap:12px;justify-content:center;margin-top:28px;flex-wrap:wrap">' +
+          '<a class="btn btn-primary" href="?view=apply" data-view="/apply">' + CTA + '</a>' +
+          '<a class="btn btn-ghost" href="?view=sign-in" data-view="/sign-in">I Already Have An Account</a>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function viewApply() {
+    page(
+      '<div class="center-wrap" style="max-width:620px;text-align:center">' +
+        '<div class="eyebrow">Private buyers list</div>' +
+        '<h1>Apply to join our private buyers list</h1>' +
+        '<p class="lead" style="margin:0 auto">It is free to join. Blueprint RES reviews every application, and if you are a good fit, we will email you to activate your account and view every Blueprint RES private deal.</p>' +
+        '<form class="card form" id="apply-form" novalidate style="margin-top:22px;text-align:left">' +
+          '<div class="row2">' +
+            '<div class="field"><label for="a-fn">First name</label><input class="input" id="a-fn" name="first_name" autocomplete="given-name" required></div>' +
+            '<div class="field"><label for="a-ln">Last name</label><input class="input" id="a-ln" name="last_name" autocomplete="family-name" required></div>' +
+          '</div>' +
+          '<div class="row2">' +
+            '<div class="field"><label for="a-em">Email</label><input class="input" id="a-em" name="email" type="email" autocomplete="email" required></div>' +
+            '<div class="field"><label for="a-ph">Phone</label><input class="input" id="a-ph" name="phone" type="tel" autocomplete="tel" required></div>' +
+          '</div>' +
+          '<div class="field"><label for="a-mk">Markets you buy in</label><input class="input" id="a-mk" name="markets" placeholder="e.g. San Fernando Valley, South Bay"></div>' +
+          '<div class="row2">' +
+            '<div class="field"><label for="a-bd">Purchase budget</label><select class="input" id="a-bd" name="budget"><option value="">Select...</option><option>Under $300K</option><option>$300K - $500K</option><option>$500K - $750K</option><option>$750K - $1M</option><option>$1M - $2M</option><option>$2M+</option></select></div>' +
+            '<div class="field"><label for="a-fi">How you buy</label><select class="input" id="a-fi" name="financing"><option value="">Select...</option><option>Cash - proof of funds ready</option><option>Hard money - lender lined up</option><option>Hard money - need a lender</option><option>Conventional</option></select></div>' +
+          '</div>' +
+          '<div class="row2">' +
+            '<div class="field"><label for="a-st">Strategy</label><select class="input" id="a-st" name="strategy"><option value="">Select...</option><option>Fix and flip</option><option>Buy and hold</option><option>BRRRR</option><option>Owner occupant</option><option>Other</option></select></div>' +
+            '<div class="field"><label for="a-dy">Deals per year</label><select class="input" id="a-dy" name="deals_per_year"><option value="">Select...</option><option>First deal</option><option>1 - 3</option><option>4 - 10</option><option>10+</option></select></div>' +
+          '</div>' +
+          '<div class="field"><label for="a-nt">Anything else we should know?</label><textarea class="input" id="a-nt" name="notes" required></textarea></div>' +
+          '<div class="hp" aria-hidden="true" style="display:none"><input name="bp_hp" tabindex="-1" autocomplete="off"></div>' +
+          '<label class="check"><input type="checkbox" name="email_consent" checked><span>Email me about new deals and portal updates.</span></label>' +
+          '<label class="check"><input type="checkbox" name="sms_consent"><span>Text me when new deals go live. Message and data rates may apply. Reply STOP to opt out.</span></label>' +
+          '<div class="field" id="robot-field"><div class="robot" id="robot"><button type="button" id="robot-btn" aria-label="I\'m not a robot" aria-pressed="false"></button>' +
+            '<div class="txt"><b id="robot-t">I\'m not a robot</b><small id="robot-s">Tick the box to verify before you submit.</small></div>' +
+            '<svg class="shield" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 3l7 3v5c0 4.5-3 8.3-7 10-4-1.7-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>' +
+            '<input type="hidden" name="captcha"></div>' +
+          '<p style="font-size:12.5px;color:var(--faint);margin:0">Submitting this form does not guarantee access. Every submission is reviewed by Blueprint RES, and approval is at Blueprint RES\'s discretion. Please allow at least 24 hours for review. If you are approved, we will email you.' + legalSentence() + '</p>' +
+          '<button class="btn btn-primary" type="submit" id="apply-btn">Submit Application</button>' +
+          '<div class="form-status" id="apply-status" role="status"></div>' +
+        '</form>' +
+      '</div>'
+    );
+    var form = document.getElementById("apply-form"), btn = document.getElementById("apply-btn"), st = document.getElementById("apply-status");
+    var busy = false;
+    // Bot check. The challenge is fetched when the form opens; ticking the box
+    // solves it in the browser (a signed SHA-256 puzzle, about a second).
+    var robot = { ch: null, sol: null, working: false };
+    function robotUi(state, sub) {
+      var box = document.getElementById("robot"), b = document.getElementById("robot-btn");
+      if (!box) return;
+      box.classList.toggle("done", state === "done");
+      b.disabled = state === "working" || state === "done";
+      b.setAttribute("aria-pressed", state === "done" ? "true" : "false");
+      b.innerHTML = state === "working" ? '<span class="spin"></span>' : state === "done" ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7"/></svg>' : '';
+      document.getElementById("robot-t").textContent = state === "done" ? "Verified" : state === "working" ? "Verifying..." : "I'm not a robot";
+      document.getElementById("robot-s").textContent = sub || (state === "done" ? "Thanks. You can submit your application." : "Tick the box to verify before you submit.");
+    }
+    function getChallenge() {
+      robot.ch = null; robot.sol = null;
+      return fetch(API_BASE + "/api/portal/challenge", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (c) { robot.ch = c; return c; });
+    }
+    getChallenge().catch(function () {});
+    function sha256(str) {
+      return crypto.subtle.digest("SHA-256", new TextEncoder().encode(str)).then(function (buf) {
+        return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
+      });
+    }
+    function solve() {
+      if (robot.working || robot.sol) return;
+      robot.working = true; robotUi("working");
+      var fld = document.getElementById("robot-field"); fld.classList.remove("invalid"); var er = fld.querySelector(".err"); if (er) er.remove();
+      (robot.ch ? Promise.resolve(robot.ch) : getChallenge()).then(function (c) {
+        var n = 0, BATCH = 500;
+        return new Promise(function (resolve, reject) {
+          (function step() {
+            var tries = [];
+            for (var i = 0; i < BATCH && n + i <= c.maxnumber; i++) tries.push(n + i);
+            if (!tries.length) return reject(new Error("unsolved"));
+            Promise.all(tries.map(function (k) { return sha256(c.salt + k); })).then(function (hs) {
+              var hit = hs.indexOf(c.challenge);
+              if (hit >= 0) return resolve({ salt: c.salt, challenge: c.challenge, signature: c.signature, number: tries[hit] });
+              n += BATCH; setTimeout(step, 0);
+            }, reject);
+          })();
+        });
+      }).then(function (sol) {
+        robot.working = false; robot.sol = sol; form.elements.captcha.value = "1"; robotUi("done");
+      }).catch(function () {
+        robot.working = false; robotUi("", "Couldn't verify. Check your connection and tick the box again.");
+      });
+    }
+    document.getElementById("robot-btn").addEventListener("click", solve);
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (busy) return;
+      var f = form.elements;
+      var payload = {
+        first_name: f.first_name.value.trim(), last_name: f.last_name.value.trim(), email: f.email.value.trim(), phone: f.phone.value.trim(),
+        markets: f.markets.value.trim(), budget: f.budget.value, financing: f.financing.value, strategy: f.strategy.value,
+        deals_per_year: f.deals_per_year.value, notes: f.notes.value.trim(), bp_hp: f.bp_hp.value,
+        email_consent: f.email_consent.checked, sms_consent: f.sms_consent.checked,
+        captcha: robot.sol
+      };
+      clearErrors();
+      // Every problem is shown ON the field (red + message), and the page
+      // scrolls to the first one, so nobody hits Submit and sees "nothing".
+      var bad = [];
+      if (!payload.first_name) bad.push(["first_name", "Enter your first name."]);
+      if (!payload.last_name) bad.push(["last_name", "Enter your last name."]);
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) bad.push(["email", "Enter a full email address, like name@gmail.com."]);
+      if (payload.phone.replace(/\D/g, "").length < 10) bad.push(["phone", "Enter a 10-digit phone number."]);
+      [["markets", "Tell us which markets you buy in."], ["budget", "Pick a purchase budget."], ["financing", "Pick how you buy."],
+       ["strategy", "Pick a strategy."], ["deals_per_year", "Pick how many deals per year."], ["notes", "Answer this question to submit."],
+       ["captcha", robot.working ? "Hang on, still verifying. Submit again in a second." : "Tick the box to confirm you are not a robot."]]
+        .forEach(function (x) { if (!payload[x[0]]) bad.push(x); });
+      if (bad.length) {
+        bad.forEach(function (x) { markField(x[0], x[1]); });
+        say("bad", bad.length === 1 ? bad[0][1] : "Fix the " + bad.length + " highlighted fields to submit.");
+        focusField(bad[0][0]);
+        return;
+      }
+      busy = true; btn.disabled = true; btn.textContent = "Submitting..."; say("", "");
+      fetch(API_BASE + "/api/portal/apply", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) })
+        .then(function (r) { return r.json().catch(function () { return {}; }); })
+        .then(function (j) {
+          busy = false; btn.disabled = false; btn.textContent = "Submit Application";
+          if (!j.ok) {
+            // A spent or expired check can't be reused: reset the box so one tick fixes it.
+            if (j.field === "captcha" && j.captcha !== "too_fast") { robot.sol = null; form.elements.captcha.value = ""; robotUi(""); getChallenge().catch(function () {}); }
+            if (j.field) { markField(j.field, j.error); focusField(j.field); }
+            return say("bad", j.error || "Something went wrong. Please try again.");
+          }
+          page('<div class="center-wrap" style="padding-top:30px">' +
+            notice("ok", "Submission received", '<div style="margin-top:6px">Thanks, ' + esc(payload.first_name) + '. Your account is pending review. If you are approved, you will get an email at <b style="display:inline">' + esc(payload.email) + '</b> to activate your account.</div>') +
+            '<p style="margin-top:18px"><a href="?" data-view="/">Back to portal</a></p></div>');
+          window.scrollTo(0, 0);
+        })
+        .catch(function () {
+          busy = false; btn.disabled = false; btn.textContent = "Submit Application";
+          say("bad", "Could not reach the server. Check your connection and try again. Nothing you typed was lost.");
+        });
+    });
+    form.addEventListener("input", function (e) { var fld = e.target.closest && e.target.closest(".field.invalid"); if (fld) { fld.classList.remove("invalid"); var er = fld.querySelector(".err"); if (er) er.remove(); } });
+    form.addEventListener("change", function (e) { var fld = e.target.closest && e.target.closest(".field.invalid"); if (fld) { fld.classList.remove("invalid"); var er = fld.querySelector(".err"); if (er) er.remove(); } });
+    function markField(name, msg) {
+      var el = form.elements[name]; if (!el || !el.closest) return;
+      var fld = el.closest(".field"); if (!fld) return;
+      fld.classList.add("invalid");
+      if (!fld.querySelector(".err")) { var sp = document.createElement("span"); sp.className = "err"; sp.setAttribute("role", "alert"); sp.textContent = msg; fld.appendChild(sp); }
+    }
+    function focusField(name) {
+      var el = name === "captcha" ? document.getElementById("robot-btn") : form.elements[name]; if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      setTimeout(function () { try { el.focus({ preventScroll: true }); } catch (x) { el.focus(); } }, 350);
+    }
+    function clearErrors() {
+      form.querySelectorAll(".field.invalid").forEach(function (fld) { fld.classList.remove("invalid"); var er = fld.querySelector(".err"); if (er) er.remove(); });
+    }
+    function say(kind, msg) { st.textContent = msg; st.style.color = kind === "bad" ? "var(--bad)" : "var(--dim)"; }
+  }
+  function legalSentence() {
+    if (!CFG || (!CFG.privacyUrl && !CFG.termsUrl)) return "";
+    var parts = [];
+    if (CFG.privacyUrl) parts.push('<a href="' + esc(CFG.privacyUrl) + '" target="_blank" rel="noopener">Privacy Policy</a>');
+    if (CFG.termsUrl) parts.push('<a href="' + esc(CFG.termsUrl) + '" target="_blank" rel="noopener">Terms</a>');
+    return " See our " + parts.join(" and ") + ".";
+  }
+
+  function viewSignIn() {
+    page('<div class="center-wrap signin-wrap"><div class="clerk-mount" id="clerk-signin"></div>' +
+      '<div class="card member-cta"><b>Not a member yet?</b><span>The private buyers list is free to join. Apply once and get access to every Blueprint RES private deal.</span>' +
+      '<a class="btn btn-primary" href="?view=apply" data-view="/apply">' + CTA + '</a></div></div>');
+    loadClerk().then(function (C) {
+      if (C.user) return go("/deals");
+      C.mountSignIn(document.getElementById("clerk-signin"), { routing: "virtual", forceRedirectUrl: viewUrl("/deals"), signUpUrl: viewUrl("/apply") });
+    }).catch(clerkDown);
+  }
+
+  function viewSignUp() {
+    var params = new URLSearchParams(location.search);
+    var hasTicket = params.has("__clerk_ticket");
+    if (!hasTicket) {
+      page('<div class="center-wrap" style="padding-top:20px">' +
+        notice("info", "Access is by invitation", '<div style="margin-top:6px">Accounts are created from the activation email you receive after approval. Haven\'t applied yet? Start with the application.</div>') +
+        '<div style="display:flex;gap:12px;margin-top:18px;flex-wrap:wrap"><a class="btn btn-primary" href="?view=apply" data-view="/apply">' + CTA + '</a><a class="btn btn-ghost" href="?view=sign-in" data-view="/sign-in">Sign In</a></div></div>');
+      return;
+    }
+    page('<div class="center-wrap"><div class="eyebrow" style="text-align:center">You\'re approved</div>' +
+      '<h1 style="text-align:center;font-size:28px">Activate your account</h1>' +
+      '<p class="lead" style="text-align:center;margin:0 auto 10px">Use the email you applied with. Create a password or continue with Google.</p>' +
+      '<div class="clerk-mount" id="clerk-signup"></div></div>');
+    loadClerk().then(function (C) {
+      C.mountSignUp(document.getElementById("clerk-signup"), { routing: "virtual", forceRedirectUrl: viewUrl("/deals"), signInUrl: viewUrl("/sign-in") });
+    }).catch(clerkDown);
+  }
+
+  function viewProfile() {
+    requireSignIn(function (C) {
+      page('<div class="clerk-mount" id="clerk-profile"></div>');
+      C.mountUserProfile(document.getElementById("clerk-profile"), { routing: "virtual" });
+    });
+  }
+
+  function clerkDown() {
+    page(notice("bad", "Sign-in is temporarily unavailable", '<div style="margin-top:6px">Please refresh in a minute.</div>'));
+  }
+
+  function requireSignIn(fn) {
+    loadClerk().then(function (C) {
+      if (!C.user) return go("/sign-in");
+      fn(C);
+    }).catch(clerkDown);
+  }
+
+  // Access gate: the Worker verifies the token and links the account; the DATA
+  // is then fetched straight from Supabase with the same token, so RLS decides.
+  // The database enforces access on every query (RLS), so the data request
+  // and the "are you approved?" check run at the same time. Approved buyers
+  // never wait on the check; anyone else gets the right message.
+  var ACCESS = { status: "", at: 0 };
+  function withAccess(fn) {
+    requireSignIn(function (C) {
+      page('<div class="skeleton" style="height:48px;max-width:360px;margin-bottom:22px"></div><div class="grid"><div class="skeleton" style="height:300px"></div><div class="skeleton" style="height:300px"></div><div class="skeleton" style="height:300px"></div></div>');
+      var fresh = ACCESS.status === "approved" && Date.now() - ACCESS.at < 120000;
+      var check = fresh ? Promise.resolve({ access: "approved" }) : C.session.getToken().then(function (token) {
+        return fetch(API_BASE + "/api/portal/me", { method: "POST", headers: { Authorization: "Bearer " + token } })
+          .then(function (r) { return r.json().catch(function () { return {}; }); });
+      });
+      fn(C);
+      check.then(function (j) {
+        ACCESS = { status: j.access || "", at: Date.now() };
+        if (j.access === "approved") return;
+        if (j.access === "suspended") return page(notice("bad", "Your access is paused", '<div style="margin-top:6px">Contact Blueprint RES if you think this is a mistake.</div>'));
+        page('<div class="center-wrap">' + notice("warn", "Your account isn't approved for deals yet", '<div style="margin-top:6px">If you applied recently, your application is still under review. Accounts are activated from the approval email.</div>') +
+          '<p style="margin-top:18px"><a href="?view=apply" data-view="/apply">Submit an application</a></p></div>');
+      }).catch(function () { /* the data request already decided what to show */ });
+    });
+  }
+
+  function sb(C, path, opts) {
+    opts = opts || {};
+    return C.session.getToken().then(function (token) {
+      return fetch(CFG.supabaseUrl + path, {
+        method: opts.method || "GET",
+        headers: Object.assign({ apikey: CFG.supabasePublishableKey, Authorization: "Bearer " + token, "Content-Type": "application/json" }, opts.headers || {}),
+        body: opts.body ? JSON.stringify(opts.body) : undefined
+      }).then(function (r) {
+        return r.json().catch(function () { return null; }).then(function (data) {
+          if (!r.ok) throw new Error((data && (data.message || data.error)) || ("HTTP " + r.status));
+          return data;
+        });
+      });
+    });
+  }
+
+  // Short-lived signed URLs (5 minutes) for private photos.
+  var DEALS_CACHE = null, DEAL_TYPE = "";
+  function signPhotos(C, paths) {
+    if (!paths.length) return Promise.resolve({});
+    return sb(C, "/storage/v1/object/sign/deal-photos", { method: "POST", body: { expiresIn: 300, paths: paths } })
+      .then(function (list) {
+        var map = {};
+        (list || []).forEach(function (x) { if (x.signedURL) map[x.path] = CFG.supabaseUrl + "/storage/v1" + x.signedURL; });
+        return map;
+      }).catch(function () { return {}; });
+  }
+
+  function viewDeals(typeFilter) {
+    withAccess(function (C) {
+      // Two stages are visible to buyers: Active ("Available Now") and Under
+      // Contract. Closed and Inactive never reach this database.
+      var FIELDS = "slug,status,address,city,state,zip,county,beds,baths,sqft,price,arv_low,arv_high,photos";
+      // buyer_type only exists once the 2026-09-22 migration has been run.
+      var cached = DEALS_CACHE && Date.now() - DEALS_CACHE.at < 60000 ? DEALS_CACHE : null;
+      (cached ? Promise.resolve(cached.deals)
+        : sb(C, "/rest/v1/deals?select=" + FIELDS + ",buyer_type&status=in.(active,pending)&order=updated_at.desc")
+          .catch(function () { return sb(C, "/rest/v1/deals?select=" + FIELDS + "&status=in.(active,pending)&order=updated_at.desc"); }))
+        .then(function (deals) {
+          deals = deals || [];
+          var firstPaths = deals.map(function (d) { return d.photos && d.photos[0] && (d.photos[0].thumb || d.photos[0].path); }).filter(Boolean);
+          return (cached ? Promise.resolve(cached.urls) : signPhotos(C, firstPaths)).then(function (urls) {
+            DEALS_CACHE = { at: cached ? cached.at : Date.now(), deals: deals, urls: urls };
+            var tab = "now", type = ["retail", "investor", "all"].indexOf(typeFilter) >= 0 ? typeFilter : (DEAL_TYPE || "all");
+            DEAL_TYPE = type;
+            function info(d) {
+              var arv = Number(d.arv_high || d.arv_low) || 0;
+              var pct = arv && d.price && d.price < arv ? Math.round(d.price / arv * 100) : 0;
+              return {
+                href: '?view=deal&deal=' + encodeURIComponent(d.slug), view: '/deals/' + encodeURIComponent(d.slug),
+                photo: d.photos && d.photos[0] && (urls[d.photos[0].thumb] || urls[d.photos[0].path]),
+                pills: '<div class="pills"><span class="pill" style="background:' + (d.status === "active" ? 'var(--bp-deep)' : 'var(--warn)') + ';color:#fff">' +
+                  (d.status === "active" ? 'For sale' : 'Under contract') + '</span>' + (pct ? '<span class="pill" style="background:#16a34a;color:#fff">' + pct + '% of ARV</span>' : '') + '</div>',
+                typeTag: d.buyer_type ? '<div class="type-tag">' + typePill(d.buyer_type) + '</div>' : '',
+                price: '<div class="price-line num"><b>' + money(d.price) + '</b>' + (arv ? '<span>(ARV ' + range(d.arv_low, d.arv_high) + ')</span>' : '') + '</div>',
+                arv: arv ? '<div class="arv-line num">ARV <b>' + range(d.arv_low, d.arv_high) + '</b></div>' : '',
+                addr: esc(d.address) + (d.city ? ", " + esc(d.city) : ""),
+                specs: '<div class="specs num"><span>' + esc(d.beds) + ' Beds</span><span>' + esc(d.baths) + ' Baths</span><span>' + (Number(d.sqft) || 0).toLocaleString() + ' sq.ft</span></div>'
+              };
+            }
+            function card(d) {
+              var x = info(d);
+              return '<a class="card deal-card" href="' + x.href + '" data-view="' + x.view + '">' +
+                '<div class="ph">' + (x.photo ? '<img src="' + esc(x.photo) + '" alt="" loading="lazy">' : '') + x.pills + '</div>' +
+                '<div class="body">' + x.price + '<div class="addr">' + x.addr + '</div>' + x.specs + x.typeTag + '</div></a>';
+            }
+            function latest(d) {
+              var x = info(d);
+              return '<a class="card deal-card featured" href="' + x.href + '" data-view="' + x.view + '">' +
+                '<div class="ph">' + (x.photo ? '<img src="' + esc(x.photo) + '" alt="">' : '') + x.pills + '</div>' +
+                '<div class="body"><div class="eyebrow">Latest deal</div>' + x.price + x.arv + '<div class="addr">' + x.addr + '</div>' + x.specs + x.typeTag +
+                '<span class="btn btn-primary" style="margin-top:22px;align-self:flex-start">View Deal</span></div></a>';
+            }
+            function render() {
+              var byType = deals.filter(function (d) { return type === "all" || (d.buyer_type || "investor") === type; });
+              var now = byType.filter(function (d) { return d.status === "active"; });
+              var soon = byType.filter(function (d) { return d.status === "pending"; });
+              var shown = tab === "soon" ? soon : now;
+              var statusSeg = '<div class="seg" role="tablist" aria-label="Deal status">' +
+                '<button type="button" role="tab" data-tab="now" aria-selected="' + (tab === "now") + '">Available Now <span class="num">' + now.length + '</span></button>' +
+                '<button type="button" role="tab" data-tab="soon" aria-selected="' + (tab === "soon") + '">Under Contract <span class="num">' + soon.length + '</span></button></div>';
+              // Same filter as the Deals menu, one click away. Combines with the
+              // status tabs: e.g. Retail + Under Contract, Investor + Available Now.
+              var typeSeg = '<div class="seg" role="tablist" aria-label="Buyer list">' +
+                '<button type="button" role="tab" data-type="all" aria-selected="' + (type === "all") + '">All Deals</button>' +
+                '<button type="button" role="tab" data-type="retail" aria-selected="' + (type === "retail") + '">Retail Buyer Deals</button>' +
+                '<button type="button" role="tab" data-type="investor" aria-selected="' + (type === "investor") + '">Investor Buyer Deals</button></div>';
+              var body = shown.length
+                ? latest(shown[0]) + (shown.length > 1 ? '<div class="grid" style="margin-top:20px">' + shown.slice(1).map(card).join("") + '</div>' : '')
+                : notice("info", tab === "soon" ? "Nothing under contract right now" : "No deals available right now",
+                    '<div style="margin-top:6px">New deals land here first. You will get an email when the next one goes live.</div>');
+              var eyebrow = type === "retail" ? "Retail buyer deals" : type === "investor" ? "Investor buyer deals" : "Private deals";
+              page('<div class="deals-head"><div><div class="eyebrow">' + eyebrow + '</div><h1 style="margin-bottom:0">' +
+                (tab === "soon" ? "Under contract" : "Available now") + '</h1></div><div class="seg-row">' + statusSeg + typeSeg + '</div></div>' + body);
+              app.querySelectorAll("[data-tab]").forEach(function (b) { b.addEventListener("click", function () { tab = b.getAttribute("data-tab"); render(); }); });
+              app.querySelectorAll("[data-type]").forEach(function (b) { b.addEventListener("click", function () {
+                type = DEAL_TYPE = b.getAttribute("data-type");
+                // Keep the address bar in step with the filter (same URLs as the Deals menu).
+                history.replaceState(null, "", viewUrl("/deals?type=" + type));
+                render(); renderNav();
+              }); });
+            }
+            render();
+          });
+        })
+        .catch(function () { page(notice("bad", "Deals couldn't load", '<div style="margin-top:6px">Refresh to try again.</div>')); });
+    });
+  }
+
+  function viewDeal(slug) {
+    withAccess(function (C) {
+      sb(C, "/rest/v1/deals?select=*&slug=eq." + encodeURIComponent(slug) + "&status=in.(active,pending)&limit=1")
+        .then(function (rows) {
+          var d = rows && rows[0];
+          if (!d) return page('<a class="back" href="?view=deals" data-view="/deals">&larr; All deals</a>' + notice("info", "This deal isn't available", '<div style="margin-top:6px">It may have sold or been taken down.</div>'));
+          var photos = Array.isArray(d.photos) ? d.photos : [];
+          var paths = photos.map(function (p) { return p.path; }).concat(photos.slice(0, 5).map(function (p) { return p.thumb; }).filter(Boolean));
+          return signPhotos(C, paths).then(function (urls) { renderDeal(d, photos, urls); });
+        })
+        .catch(function () { page(notice("bad", "This deal couldn't load", '<div style="margin-top:6px">Refresh to try again.</div>')); });
+    });
+  }
+
+  function renderDeal(d, photos, urls) {
+    var shown = photos.filter(function (p) { return urls[p.path]; });
+    var tiles = shown.slice(0, 5).map(function (p, i) {
+      var more = i === 4 && shown.length > 5;
+      return '<button type="button" data-photo="' + i + '" aria-label="Open photo ' + (i + 1) + '"><img src="' + esc(urls[p.thumb] || urls[p.path]) + '" alt="' + esc(p.label || "") + '"' + (i === 0 ? ' fetchpriority="high"' : ' loading="lazy"') + '>' +
+        (more ? '<span class="more">See all ' + shown.length + ' photos</span>' : '') + '</button>';
+    }).join("");
+    var sys = d.systems || {};
+    var kv = function (label, val) { return val ? '<div><small>' + esc(label) + '</small><span>' + esc(val) + '</span></div>' : ''; };
+    var row = function (label, val, cls) { return val ? '<div><span>' + esc(label) + '</span><b class="num"' + (cls ? ' style="color:' + cls + '"' : '') + '>' + esc(val) + '</b></div>' : ''; };
+    var repairs = [d.repair_low, d.repair_mid, d.repair_high].map(Number).filter(function (n) { return n > 0; });
+    var repairTxt = repairs.length ? (Math.min.apply(null, repairs) === Math.max.apply(null, repairs) ? moneyK(repairs[0]) : moneyK(Math.min.apply(null, repairs)) + " - " + moneyK(Math.max.apply(null, repairs))) : "";
+    var county = d.county ? (/county\s*$/i.test(d.county) ? d.county : d.county + " County") : "";
+    var loc = [county, d.city, (d.state + " " + d.zip).trim()].filter(Boolean).join(", ");
+    var sysHtml = kv("Property condition", d.rehab_note) + kv("Roof", sys.roof) + kv("HVAC", sys.hvac) + kv("Electrical", sys.electrical) + kv("Plumbing", sys.plumbing) + kv("Foundation", sys.foundation);
+    var comps = Array.isArray(d.comps) ? d.comps : [];
+    var disc = Array.isArray(d.disclosures) ? d.disclosures : [];
+    var why = Array.isArray(d.why_it_works) ? d.why_it_works : [];
+
+    page(
+      '<a class="back" href="?view=deals" data-view="/deals">&larr; All deals</a>' +
+      (tiles ? '<div class="mosaic">' + tiles + '</div>' : '') +
+      '<div class="detail-head"><div><h1>' + esc(d.address) + '</h1><div class="loc">' + esc(loc) + '</div></div>' +
+        '<div class="status-pills"><span class="pill" style="background:' + (d.status === "active" ? 'var(--ok-soft);color:var(--ok)' : 'var(--warn-soft);color:var(--warn)') + '">' +
+          (d.status === "active" ? 'Available now' : 'Under contract') + '</span>' + typePill(d.buyer_type) + '</div></div>' +
+      '<div class="layout"><div class="stack">' +
+        '<div class="card pad"><div class="specbar num">' +
+          '<div><small>Beds</small><b>' + esc(d.beds) + '</b></div><div><small>Baths</small><b>' + esc(d.baths) + '</b></div>' +
+          '<div><small>Sq.Ft</small><b>' + (Number(d.sqft) || 0).toLocaleString() + '</b></div><div><small>Year built</small><b>' + esc(d.year_built || "-") + '</b></div>' +
+        '</div></div>' +
+        ((d.description || why.length) ? '<div class="card pad"><h2>Overview</h2>' + (d.description ? '<div class="desc">' + esc(d.description) + '</div>' : '') +
+          (why.length ? '<div class="checks" style="grid-template-columns:1fr;margin-top:14px">' + why.map(function (w) { return '<div><b>' + esc(w.title || "") + '</b>' + (w.body ? " - " + esc(w.body) : "") + '</div>'; }).join("") + '</div>' : '') + '</div>' : '') +
+        '<div class="card pad"><h2>Additional details</h2><div class="kv">' + kv("Type", d.property_type) + kv("Market", d.market) + kv("Delivered", d.delivered) + kv("HOA", d.hoa || "None reported") + kv("Solar panels", d.solar || "None reported") + '</div></div>' +
+        (sysHtml ? '<div class="card pad"><h2>Property condition &amp; systems</h2><div class="kv">' + sysHtml + '</div></div>' : '') +
+        (comps.length ? '<div class="card pad"><h2>Comps</h2><div class="rows">' + comps.map(function (c) {
+          var label = esc(c.label || "Comparable sale");
+          var link = c.url && /^https?:\/\//i.test(c.url) ? '<a href="' + esc(c.url) + '" target="_blank" rel="noopener noreferrer">' + label + '</a>' : label;
+          return '<div><span>' + link + '</span><b class="num">' + esc(c.price || "") + '</b></div>';
+        }).join("") + '</div></div>' : '') +
+        (disc.length ? '<div class="card pad"><h2>Disclosures</h2><div class="checks">' + disc.map(function (t) { return '<div>' + esc(t) + '</div>'; }).join("") + '</div>' +
+          '<p style="font-size:12.5px;color:var(--faint);margin:14px 0 0">Disclosures reflect what Blueprint knows at listing time. Verify all details, condition, and title before purchase.</p></div>' : '') +
+        '<div class="card pad"><h2>Financing information</h2>' + (d.financing ? '<p style="margin:0 0 10px;color:#46474a">' + esc(d.financing) + '</p>' : '') +
+          '<div class="rows">' + row("Earnest money", d.emd) + row("Expected close", d.close_date) + row("Showings", d.showings) + '</div></div>' +
+      '</div>' +
+      '<aside class="side"><div class="card pad">' +
+        '<div style="display:flex;justify-content:space-between;align-items:center"><span style="color:var(--dim)">Price</span><span class="bigprice num">' + money(d.price) + '</span></div>' +
+        '<div style="display:flex;justify-content:space-between;margin-top:6px"><span style="color:var(--dim)">ARV</span>' +
+          ((Number(d.arv_low) || Number(d.arv_high)) ? '<b class="num" style="font-size:17px">' + range(d.arv_low, d.arv_high) + '</b>' : '<span style="color:var(--faint)">Ask us</span>') + '</div>' +
+        '<div class="rows" style="margin-top:14px;border-top:1px solid var(--line);padding-top:6px">' +
+          row("Gross margin", Number(d.gross_margin) ? money(d.gross_margin) : "", "var(--ok)") + row("Repair estimate", repairTxt) + row("Expected close", d.close_date) +
+        '</div>' +
+        '<button class="btn btn-primary" id="inquire" style="width:100%;margin-top:16px">Send An Inquiry</button>' +
+      '</div></aside></div>'
+    );
+
+    app.querySelectorAll("[data-photo]").forEach(function (b) {
+      b.addEventListener("click", function () { openLightbox(shown.map(function (p) { return { src: urls[p.path], label: p.label || "" }; }), Number(b.dataset.photo)); });
+    });
+    document.getElementById("inquire").addEventListener("click", function () { openInquiry(d); });
+  }
+
+  function openLightbox(items, idx) {
+    if (!items.length) return;
+    var lb = document.createElement("div");
+    lb.className = "lb"; lb.setAttribute("role", "dialog"); lb.setAttribute("aria-modal", "true");
+    function draw() {
+      lb.innerHTML = '<img src="' + esc(items[idx].src) + '" alt="' + esc(items[idx].label) + '">' +
+        '<button class="x" aria-label="Close">&times;</button>' +
+        (items.length > 1 ? '<button class="nav-b prev" aria-label="Previous">&#8249;</button><button class="nav-b next" aria-label="Next">&#8250;</button>' : '') +
+        '<div class="cap">' + esc(items[idx].label) + ' &middot; ' + (idx + 1) + ' / ' + items.length + '</div>';
+    }
+    function close() { lb.remove(); document.removeEventListener("keydown", key); }
+    function key(e) { if (e.key === "Escape") close(); if (e.key === "ArrowLeft") { idx = (idx - 1 + items.length) % items.length; draw(); } if (e.key === "ArrowRight") { idx = (idx + 1) % items.length; draw(); } }
+    lb.addEventListener("click", function (e) {
+      if (e.target === lb || e.target.closest(".x")) return close();
+      if (e.target.closest(".prev")) { idx = (idx - 1 + items.length) % items.length; draw(); }
+      if (e.target.closest(".next")) { idx = (idx + 1) % items.length; draw(); }
+    });
+    document.addEventListener("keydown", key);
+    draw(); document.body.appendChild(lb);
+  }
+
+  function openInquiry(d) {
+    var C = window.Clerk, u = C && C.user;
+    var m = document.createElement("div");
+    m.className = "modal";
+    m.innerHTML = '<div class="card form" role="dialog" aria-modal="true" aria-label="Send an inquiry">' +
+      '<div><div class="eyebrow">Send an inquiry</div><h2 style="margin:6px 0 0">' + esc(d.address) + '</h2></div>' +
+      '<div class="field"><label for="iq-msg">Message</label><textarea class="input" id="iq-msg" required placeholder="Timeline, questions, your offer..."></textarea></div>' +
+      '<button class="btn btn-primary" id="iq-send">Send Inquiry</button><button class="btn btn-ghost" id="iq-cancel">Cancel</button>' +
+      '<div class="form-status" id="iq-status" role="status"></div></div>';
+    document.body.appendChild(m);
+    var close = function () { m.remove(); };
+    m.addEventListener("click", function (e) { if (e.target === m) close(); });
+    m.querySelector("#iq-cancel").onclick = close;
+    var sending = false;
+    m.querySelector("#iq-send").onclick = function () {
+      if (sending) return;
+      var st = m.querySelector("#iq-status");
+      if (!m.querySelector("#iq-msg").value.trim()) { st.textContent = "Write a message to send your inquiry."; st.style.color = "var(--bad)"; return; }
+      sending = true;
+      st.textContent = "Sending..."; st.style.color = "var(--dim)";
+      C.session.getToken().then(function (token) {
+        return fetch(API_BASE + "/api/portal/inquiry", { method: "POST", headers: { "Content-Type": "application/json", Authorization: "Bearer " + token },
+          body: JSON.stringify({ slug: d.slug, message: m.querySelector("#iq-msg").value }) });
+      }).then(function (r) { return r.json().catch(function () { return {}; }); })
+        .then(function (j) {
+          sending = false;
+          if (!j.ok) { st.textContent = j.error || "Couldn't send. Try again."; st.style.color = "var(--bad)"; return; }
+          m.querySelector(".card").innerHTML = notice("ok", "Inquiry sent", '<div style="margin-top:6px">We will reach out' + (u && u.primaryEmailAddress ? " at " + esc(u.primaryEmailAddress.emailAddress) : "") + ' shortly.</div>') +
+            '<button class="btn btn-ghost" style="margin-top:12px;width:100%">Close</button>';
+          m.querySelector(".card button").onclick = close;
+        })
+        .catch(function () { sending = false; st.textContent = "Could not reach the server. Try again."; st.style.color = "var(--bad)"; });
+    };
+  }
+
+  /* ---------------- router ---------------- */
+  function route() {
+    var p = currentRoute();
+    renderNav();
+    if (p === "/") {
+      loadClerk().then(function (C) { C.user ? go("/deals") : viewLanding(); renderNav(); }).catch(viewLanding);
+    } else if (p === "/apply") viewApply();
+    else if (p === "/sign-in") viewSignIn();
+    else if (p === "/sign-up") viewSignUp();
+    else if (p === "/profile") viewProfile();
+    else if (p === "/signed-out") { rememberSignedIn(false); location.replace(SITE_URL); }
+    else if (p === "/deals") viewDeals("");
+    else if (p.indexOf("/deals?type=") === 0) viewDeals(p.slice("/deals?type=".length));
+    else if (p.indexOf("/deals/") === 0) viewDeal(decodeURIComponent(p.slice("/deals/".length)));
+    else page(notice("info", "Page not found", '<div style="margin-top:6px"><a href="?" data-view="/">Go to the portal</a></div>'));
+  }
+
+  loadConfig().then(function () {
+    route();
+    loadClerk().then(renderNav).catch(function () {});
+  }).catch(function () {
+    page(notice("bad", "The portal couldn't load", '<div style="margin-top:6px">Please refresh in a minute.</div>'));
+  });
+})();
+</script>
+</body>
+</html>
