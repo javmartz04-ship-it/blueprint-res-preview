@@ -134,6 +134,9 @@
   .seg button span { font-size:12px; background:rgba(0,0,0,0.06); border-radius:999px; padding:1px 8px; }
   .seg button[aria-selected="true"] { background:#fff; color:var(--ink); box-shadow:0 1px 3px rgba(16,22,26,0.12); }
   .seg button[aria-selected="true"] span { background:var(--bp-soft); color:var(--bp-ink); }
+  .seg.seg-blue { background:var(--bp-soft); }
+  .seg.seg-blue button { color:var(--bp-ink); }
+  .seg.seg-blue button[aria-selected="true"] { background:var(--bp); color:#fff; box-shadow:0 6px 16px -8px rgba(28,157,224,0.7); }
 
   /* deal detail */
   .back { display:inline-flex; align-items:center; gap:6px; color:var(--dim); text-decoration:none; font-size:14px; font-weight:500; margin-bottom:18px; }
@@ -257,22 +260,48 @@
 </footer>
 
 <script>
+/* PREVIEW ONLY: a pretend signed-in, approved buyer and sample deals. Nothing is sent anywhere. */
 (function () {
+  var DEALS = [{"slug": "sample-latest", "status": "active", "buyer_type": "investor", "address": "123 Sample Pl (sample deal)", "city": "Granada Hills", "state": "CA", "zip": "91344", "county": "Los Angeles", "beds": 6, "baths": 4, "sqft": 4937, "year_built": 1985, "price": 1925000, "arv_low": 3000000, "arv_high": 3000000, "gross_margin": 750000, "repair_low": 80000, "repair_mid": 0, "repair_high": 180000, "close_date": "2026-11-15", "property_type": "Single Family Residence", "market": "Granada Hills", "delivered": "Vacant", "description": "Sample deal for the preview.", "photos": [{"path": "p0.jpg", "thumb": "p0.jpg", "label": "Front"}], "comps": [], "disclosures": [], "why_it_works": [], "systems": {}}, {"slug": "sample-retail", "status": "active", "buyer_type": "retail", "address": "45 Preview Ave (sample deal)", "city": "Mesquite", "state": "CA", "zip": "91344", "county": "Los Angeles", "beds": 3, "baths": 2, "sqft": 1400, "year_built": 1985, "price": 192554, "arv_low": 250000, "arv_high": 300000, "gross_margin": 0, "repair_low": 0, "repair_mid": 0, "repair_high": 0, "close_date": "2026-11-15", "property_type": "Single Family Residence", "market": "Mesquite", "delivered": "Vacant", "description": "Sample deal with no margin or repairs entered: those rows say Ask us.", "photos": [{"path": "p1.jpg", "thumb": "p1.jpg", "label": "Front"}], "comps": [], "disclosures": [], "why_it_works": [], "systems": {}}, {"slug": "sample-investor", "status": "active", "buyer_type": "investor", "address": "9 Example Way (sample deal)", "city": "Los Angeles", "state": "CA", "zip": "91344", "county": "Los Angeles", "beds": 4, "baths": 2, "sqft": 2100, "year_built": 1985, "price": 1500000, "arv_low": 2850000, "arv_high": 3000000, "gross_margin": 750000, "repair_low": 80000, "repair_mid": 0, "repair_high": 180000, "close_date": "2026-11-15", "property_type": "Single Family Residence", "market": "Los Angeles", "delivered": "Vacant", "description": "Sample deal.", "photos": [{"path": "p2.jpg", "thumb": "p2.jpg", "label": "Front"}], "comps": [], "disclosures": [], "why_it_works": [], "systems": {}}, {"slug": "sample-contract", "status": "pending", "buyer_type": "retail", "address": "77 Demo St (sample deal)", "city": "Hesperia", "state": "CA", "zip": "91344", "county": "Los Angeles", "beds": 3, "baths": 2, "sqft": 1340, "year_built": 1985, "price": 300000, "arv_low": 500000, "arv_high": 500000, "gross_margin": 120000, "repair_low": 25000, "repair_mid": 0, "repair_high": 40000, "close_date": "2026-11-15", "property_type": "Single Family Residence", "market": "Hesperia", "delivered": "Vacant", "description": "Sample under-contract deal.", "photos": [{"path": "p3.jpg", "thumb": "p3.jpg", "label": "Front"}], "comps": [], "disclosures": [], "why_it_works": [], "systems": {}}], COVERS = ["https://blueprint-res-api.javier-d51.workers.dev/api/portal/cover/d053bbf427d29c11", "https://blueprint-res-api.javier-d51.workers.dev/api/portal/cover/4639c7e44b472f3c", "https://blueprint-res-api.javier-d51.workers.dev/api/portal/cover/5c4cd0c716c3b03c", "https://blueprint-res-api.javier-d51.workers.dev/api/portal/cover/0ed3d2e12098a22c"];
+  window.__PREVIEW_CLERK = {
+    loaded: true,
+    user: { id: "preview", primaryEmailAddress: { emailAddress: "preview@example.com" } },
+    session: { getToken: function () { return Promise.resolve("preview"); } },
+    addListener: function () {}, mountSignIn: function () {}, mountSignUp: function () {},
+    mountUserProfile: function (el) { el.innerHTML = "<p style='color:#6b6e73'>Profile is not part of the preview.</p>"; },
+    mountUserButton: function (el) { el.innerHTML = "<span style='display:inline-block;width:28px;height:28px;border-radius:50%;background:#1c9de0'></span>"; },
+    signOut: function () { return Promise.resolve(); }
+  };
+  window.Clerk = window.__PREVIEW_CLERK;
   var real = window.fetch;
+  function J(o) { return Promise.resolve(new Response(JSON.stringify(o), { headers: { "Content-Type": "application/json" } })); }
   function hex(b) { return Array.prototype.map.call(new Uint8Array(b), function (x) { return ("0" + x.toString(16)).slice(-2); }).join(""); }
   window.fetch = function (url, opts) {
     url = String(url);
-    if (url.indexOf("/api/portal/challenge") >= 0) {
-      var salt = hex(crypto.getRandomValues(new Uint8Array(12))) + "." + Date.now(), n = Math.floor(Math.random() * 60000);
-      return crypto.subtle.digest("SHA-256", new TextEncoder().encode(salt + n)).then(function (h) {
-        return new Response(JSON.stringify({ algorithm: "SHA-256", salt: salt, challenge: hex(h), maxnumber: 60000, signature: "preview" }), { headers: { "Content-Type": "application/json" } });
-      });
+    if (url.indexOf("/rest/v1/deals") >= 0) {
+      var m = url.match(/slug=eq\.([^&]+)/);
+      return J(m ? DEALS.filter(function (d) { return d.slug === decodeURIComponent(m[1]); }) : DEALS);
     }
-    if (url.indexOf("/api/portal/apply") >= 0) {
-      return Promise.resolve(new Response(JSON.stringify({ ok: true, preview: true }), { headers: { "Content-Type": "application/json" } }));
+    if (url.indexOf("/storage/v1/object/sign/") >= 0) {
+      var paths = JSON.parse(opts.body).paths;
+      return J(paths.map(function (p) { var i = +p.replace(/\D/g, "") || 0; return { path: p, signedURL: "__COVER__" + i }; }));
     }
+    if (url.indexOf("/api/portal/me") >= 0) return J({ ok: true, access: "approved" });
+    if (url.indexOf("/api/portal/inquiry") >= 0) return J({ ok: true });
+    if (url.indexOf("/api/portal/apply") >= 0) return J({ ok: true });
     return real.apply(this, arguments);
   };
+  // Signed photo URLs are built as SUPABASE_URL + "/storage/v1" + signedURL; point them at the public covers.
+  var obs = new MutationObserver(function () {
+    document.querySelectorAll('img[src*="__COVER__"]').forEach(function (img) {
+      var i = +img.getAttribute("src").split("__COVER__")[1] || 0; img.src = COVERS[i % COVERS.length];
+    });
+  });
+  document.addEventListener("DOMContentLoaded", function () { obs.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["src"] }); });
+  var bar = document.createElement("div");
+  bar.textContent = "Preview with sample deals. Live site: real deals behind the buyer login.";
+  bar.style.cssText = "position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:99;background:#202124;color:#fff;font:600 12.5px Inter,system-ui,sans-serif;padding:8px 14px;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.25)";
+  document.addEventListener("DOMContentLoaded", function () { document.body.appendChild(bar); });
 })();
 </script>
 <script>
@@ -357,6 +386,7 @@
     });
   }
   function loadClerk() {
+    if (window.__PREVIEW_CLERK) return clerkReady || (clerkReady = Promise.resolve(window.__PREVIEW_CLERK));
     if (clerkReady) return clerkReady;
     clerkReady = new Promise(function (resolve, reject) {
       var s = document.createElement("script");
@@ -754,7 +784,7 @@
                 '<button type="button" role="tab" data-tab="soon" aria-selected="' + (tab === "soon") + '">Under Contract <span class="num">' + soon.length + '</span></button></div>';
               // Same filter as the Deals menu, one click away. Combines with the
               // status tabs: e.g. Retail + Under Contract, Investor + Available Now.
-              var typeSeg = '<div class="seg" role="tablist" aria-label="Buyer list">' +
+              var typeSeg = '<div class="seg seg-blue" role="tablist" aria-label="Buyer list">' +
                 '<button type="button" role="tab" data-type="all" aria-selected="' + (type === "all") + '">All Deals</button>' +
                 '<button type="button" role="tab" data-type="retail" aria-selected="' + (type === "retail") + '">Retail Buyer Deals</button>' +
                 '<button type="button" role="tab" data-type="investor" aria-selected="' + (type === "investor") + '">Investor Buyer Deals</button></div>';
@@ -803,6 +833,10 @@
     }).join("");
     var sys = d.systems || {};
     var kv = function (label, val) { return val ? '<div><small>' + esc(label) + '</small><span>' + esc(val) + '</span></div>' : ''; };
+    // The price box always shows the same rows, in the same order, on every deal.
+    var fixedRow = function (label, val, cls) {
+      return '<div><span>' + esc(label) + '</span>' + (val ? '<b class="num"' + (cls ? ' style="color:' + cls + '"' : '') + '>' + esc(val) + '</b>' : '<span style="color:var(--faint)">Ask us</span>') + '</div>';
+    };
     var row = function (label, val, cls) { return val ? '<div><span>' + esc(label) + '</span><b class="num"' + (cls ? ' style="color:' + cls + '"' : '') + '>' + esc(val) + '</b></div>' : ''; };
     var repairs = [d.repair_low, d.repair_mid, d.repair_high].map(Number).filter(function (n) { return n > 0; });
     var repairTxt = repairs.length ? (Math.min.apply(null, repairs) === Math.max.apply(null, repairs) ? moneyK(repairs[0]) : moneyK(Math.min.apply(null, repairs)) + " - " + moneyK(Math.max.apply(null, repairs))) : "";
@@ -843,7 +877,7 @@
         '<div style="display:flex;justify-content:space-between;margin-top:6px"><span style="color:var(--dim)">ARV</span>' +
           ((Number(d.arv_low) || Number(d.arv_high)) ? '<b class="num" style="font-size:17px">' + range(d.arv_low, d.arv_high) + '</b>' : '<span style="color:var(--faint)">Ask us</span>') + '</div>' +
         '<div class="rows" style="margin-top:14px;border-top:1px solid var(--line);padding-top:6px">' +
-          row("Gross margin", Number(d.gross_margin) ? money(d.gross_margin) : "", "var(--ok)") + row("Repair estimate", repairTxt) + row("Expected close", d.close_date) +
+          fixedRow("Gross margin", Number(d.gross_margin) ? money(d.gross_margin) : "", "var(--ok)") + fixedRow("Repair estimate", repairTxt) +
         '</div>' +
         '<button class="btn btn-primary" id="inquire" style="width:100%;margin-top:16px">Send An Inquiry</button>' +
       '</div></aside></div>'
